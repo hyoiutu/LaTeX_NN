@@ -1,0 +1,53 @@
+\DTLloaddb{irisDB}{iris_random.csv}
+
+\let\newglobalarray\newarray
+\patchcmd{\newglobalarray}{\edef}{\xdef}{}{}
+
+\newcounter{layerNum}
+\newcounter{layerSize}
+\newcounter{classNum}
+\newcounter{inputNum}
+\newcounter{learningStep}
+\newcounter{dataNum@iris}
+
+\pgfmathsetmacro{\learningRate}{0.1}
+\xdef\learningRate{\learningRate}
+
+\setcounter{layerNum}{3} % fix layer num
+\setcounter{layerSize}{3} % fix layer size
+\setcounter{classNum}{3} % fix class num
+\setcounter{inputNum}{4} % fix input num
+\setcounter{learningStep}{1}
+
+\newglobalarray\irisSVArray
+\newglobalarray\irisCorrectArray
+\newglobalarray\weights@ItoH@iris
+\newglobalarray\weights@HtoO@iris
+\newglobalarray\bias@ItoH@iris
+\newglobalarray\bias@HtoO@iris
+\newglobalarray\Zs@iris
+\newglobalarray\As@iris
+\newglobalarray\oneHotTeacher
+\newglobalarray\OUnitError
+\readarray{OUnitError}{0&0&0}
+\newglobalarray\HUnitError
+\readarray{HUnitError}{0&0&0}
+
+% max layer size assign to data height
+\dataheight=\value{inputNum}%
+
+\newcommand{\addSupervisorToArray}{%
+    \newcounter{step@dtl}%
+
+    \setcounter{step@dtl}{0}%
+    \dataheight=\value{inputNum}%
+    \DTLforeach{irisDB}{\slIris=sepalLength,\swIris=sepalWidth,\plIris=petalLength,\pwIris=petalWidth,\correctIris=species}{%
+        \stepcounter{step@dtl}%
+        \assignArray{\irisSVArray(\value{step@dtl}, 1)}{\slIris}%
+        \assignArray{\irisSVArray(\value{step@dtl}, 2)}{\swIris}%
+        \assignArray{\irisSVArray(\value{step@dtl}, 3)}{\plIris}%
+        \assignArray{\irisSVArray(\value{step@dtl}, 4)}{\pwIris}%
+        \assignArray{\irisCorrectArray(\value{step@dtl})}{\correctIris}%
+    }{}%
+    \setcounter{dataNum@iris}{\value{step@dtl}}%
+}%

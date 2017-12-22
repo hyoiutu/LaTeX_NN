@@ -1,0 +1,76 @@
+\newcommand{\initWeights}{%
+    \foreach \x in {1,...,\value{inputNum}}{%
+        \foreach \y in {1,...,\value{layerSize}}{%
+            \FPrandom{\result}%
+            \pgfmathsetmacro{\initialVal}{\result*0.1}
+            \assignArray{\weights@ItoH@iris(\y,\x)}{\initialVal}
+
+        }%
+    }%
+    \foreach \x in {1,...,\value{layerSize}}{%
+        \foreach \y in {1,...,\value{classNum}}{%
+            \FPrandom{\result}%
+            \pgfmathsetmacro{\initialVal}{\result*0.1}
+            \assignArray{\weights@HtoO@iris(\y,\x)}{\initialVal}
+        }%
+    }%
+}%
+
+\newcommand{\initBias}{%
+    \foreach \x in {1,...,\value{inputNum}}{%
+            \FPrandom{\result}%
+            \pgfmathsetmacro{\initialVal}{\result*0.1}
+            \assignArray{\bias@ItoH@iris(\x)}{\initialVal}
+    }%
+    \foreach \x in {1,...,\value{layerSize}}{%
+            \FPrandom{\result}%
+            \pgfmathsetmacro{\initialVal}{\result*0.1}
+            \assignArray{\bias@HtoO@iris(\x)}{\initialVal}
+    }%
+}%
+
+\newcommand{\updateWeights}{%
+    \foreach \x in {1,...,\value{inputNum}}{%
+        \foreach \y in {1,...,\value{layerSize}}{%
+            \checkweights@ItoH@iris(\y,\x)%
+            \pgfmathsetmacro{\w@tmp}{\cachedata}%
+            \checkHUnitError(\y)%
+            \pgfmathsetmacro{\delta@tmp}{\cachedata}%
+            \checkAs@iris(1, \x)%
+            \pgfmathsetmacro{\a@tmp}{\cachedata}%
+            \pgfmathsetmacro{\updateW}{(\w@tmp) - \learningRate*\delta@tmp*\a@tmp}%
+            \assignArray{\weights@ItoH@iris(\y,\x)}{\updateW}%
+        }%
+    }%
+    \foreach \x in {1,...,\value{layerSize}}{%
+        \foreach \y in {1,...,\value{classNum}}{%
+            \checkweights@HtoO@iris(\y,\x)%
+            \pgfmathsetmacro{\w@tmp}{\cachedata}%
+            \checkOUnitError(\y)%
+            \pgfmathsetmacro{\delta@tmp}{\cachedata}%
+            \checkAs@iris(2, \x)%
+            \pgfmathsetmacro{\a@tmp}{\cachedata}%
+            \pgfmathsetmacro{\updateW}{(\w@tmp) - \learningRate*\delta@tmp*\a@tmp}%
+            \assignArray{\weights@HtoO@iris(\y,\x)}{\updateW}%
+        }%
+    }%
+}%
+
+\newcommand{\updateBias}{%
+    \foreach \x in {1,...,\value{layerSize}}{%
+            \checkbias@ItoH@iris(\x)%
+            \pgfmathsetmacro{\b@tmp}{\cachedata}%
+            \checkHUnitError(\x)%
+            \pgfmathsetmacro{\delta@tmp}{\cachedata}%
+            \pgfmathsetmacro{\updateB}{(\b@tmp) - \learningRate*\delta@tmp}%
+            \assignArray{\bias@ItoH@iris(\x)}{\updateB}%
+    }%
+    \foreach \x in {1,...,\value{classNum}}{%
+            \checkbias@HtoO@iris(\x)%
+            \pgfmathsetmacro{\b@tmp}{\cachedata}%
+            \checkOUnitError(\x)%
+            \pgfmathsetmacro{\delta@tmp}{\cachedata}%
+            \pgfmathsetmacro{\updateB}{(\b@tmp) - \learningRate*\delta@tmp}%
+            \assignArray{\bias@HtoO@iris(\x)}{\updateB}%
+    }%
+}%

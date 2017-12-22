@@ -1,0 +1,134 @@
+% show z param
+\newcommand{\showZs}{%
+    calculated input layer $z$ \\%
+    \foreach \x in {1,...,\value{inputNum}}{%
+      $z^{(1)}_\x=$\Zs@iris(1,\x),\ %
+    } \\%
+    calculated hidden layer $z$ \\%
+    \foreach \x in {1,...,\value{layerSize}}{%
+      $z^{(2)}_\x=$\Zs@iris(2,\x),\ %
+    } \\%
+    calculated output layer $z$ \\%
+    \foreach \x in {1,...,\value{classNum}}{%
+      $z^{(3)}_\x=$\Zs@iris(3,\x),\ %
+    } \\%
+}%
+
+
+% show a param
+\newcommand{\showAs}{%
+  calculated input layer $a$ \\%
+  \foreach \x in {1,...,\value{inputNum}}{%
+      $a^{(1)}_\x=$\As@iris(1, \x),\ %
+  } \\%
+  calculated hidden layer $a$ \\%
+  \foreach \x in {1,...,\value{layerSize}}{%
+      $a^{(2)}_\x=$\As@iris(2, \x),\ %
+  }\\%
+  calculated output layer $a$ \\%
+  \foreach \x in {1,...,\value{classNum}}{%
+      $a^{(3)}_\x=$\As@iris(3, \x),\ %
+  }\\%
+}%
+
+% show unit errors
+\newcommand{\showUnitErrors}{%
+  hidden unit errors \\%
+  \foreach \x in {1,...,\value{layerSize}}{%
+    $\delta^{(2)}_\x=$\HUnitError(\x),\ %
+  } \\%
+  output unit errors \\%
+  \foreach \x in {1,...,\value{classNum}}{%
+    $\delta^{(3)}_\x=$\OUnitError(\x),\ %
+  } \\%
+}%
+
+% show init weights
+\newcommand{\showInitWeights}{%
+  Init weights of input layer to hidden layer \\%
+  \foreach \x in {1,...,\value{inputNum}}{%
+    \foreach \y in {1,...,\value{layerSize}}{%
+      $w^{(2)}_{\y\x}$ = \weights@ItoH@iris(\y,\x) \ %
+    }\\%
+  }%
+  Init weigths of hidden layer to output layer \\%
+  \foreach \x in {1,...,\value{layerSize}}{%
+    \foreach \y in {1,...,\value{classNum}}{%
+      $w^{(3)}_{\y\x}$ = \weights@HtoO@iris(\y,\x) \ %
+    }\\%
+  }%
+}%
+
+% show init Bias
+\newcommand{\showInitBias}{%
+  Init bias of input layer to hidden layer \\%
+  \foreach \x in {1,...,\value{inputNum}}{%
+    $b^{(2)}_\x$ = \bias@ItoH@iris(\x) \ %
+  }\\%
+  Init bias of hidden layer to output layer \\%
+  \foreach \x in {1,...,\value{inputNum}}{%
+    $b^{(3)}_\x$ = \bias@HtoO@iris(\x) \ %
+  }\\%
+}
+
+% show update weights
+\newcommand{\showUpdateWeights}{%
+  Update weights of input layer to hidden layer \\%
+  \foreach \x in {1,...,\value{inputNum}}{%
+    \foreach \y in {1,...,\value{layerSize}}{%
+      $w^{(2)}_{\y\x}$ = \weights@ItoH@iris(\y,\x) \ %
+    }\\ %
+  }%
+  Update weigths of hidden layer to output layer \\%
+  \foreach \x in {1,...,\value{layerSize}}{%
+    \foreach \y in {1,...,\value{classNum}}{%
+      $w^{(3)}_{\y\x}$ = \weights@HtoO@iris(\y,\x) \ %
+    }\\%
+  }%
+}
+
+% show update bias
+\newcommand{\showUpdateBias}{%
+  Update Bias of input layer to hidden layer \\%
+  \foreach \x in {1,...,\value{layerSize}}{%
+    $b^{(2)}_{\x}$ = \bias@ItoH@iris(\x) \ %
+  }\\ %
+  Update Bias of hidden layer to output layer \\%
+  \foreach \x in {1,...,\value{classNum}}{%
+    $b^{(3)}_{\x}$ = \bias@HtoO@iris(\x) \ %
+  }\\ %
+}%
+
+% show softmax value
+%calculated output layer $a$ \\%
+%\foreach \x in {1,...,\value{classNum}}{%
+%  \As@iris(3,\x),\ %
+%} \\%
+
+% show law dataNum
+\newcommand{\showLawData}{%
+  All Iris Data \\%
+  \foreach \x in {1,...,\value{dataNum@iris}}{%
+    \x : \foreach \y in {1,...,4}{%
+      \irisSVArray(\x, \y),\ %
+    } \\%
+  }%
+}%
+
+  % show answer
+\newcommand{\showAnswer}{
+  \FPifeq{\myAns}{\a@one} answer is ``setosa'' \\%
+  \else \FPifeq{\myAns}{\a@two} answer is ``versicolor'' \\%
+  \else answer is ``virginica'' \\ \fi%
+
+  \ifthenelse{\t@one=1}{%
+      solution is ``setosa'' \\%
+  }%
+  {%
+      \ifthenelse{\t@two=1}{%
+          solution is ``versicolor'' \\%
+      }{%
+          solution is ``virginica'' \\%
+      }%
+  }%
+}%

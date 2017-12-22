@@ -1,0 +1,16 @@
+\newcommand{\answer}[1]{%
+    \onehotembedding{#1}
+    \checkoneHotTeacher(1)%
+    \pgfmathsetmacro{\t@one}{\cachedata}%
+    \checkoneHotTeacher(2)%
+    \pgfmathsetmacro{\t@two}{\cachedata}%
+    \checkoneHotTeacher(3)%
+    \pgfmathsetmacro{\t@three}{\cachedata}%
+    \checkAs@iris(3, 1)%
+    \pgfmathsetmacro{\a@one}{\cachedata}%
+    \checkAs@iris(3, 2)%
+    \pgfmathsetmacro{\a@two}{\cachedata}%
+    \checkAs@iris(3, 3)%
+    \pgfmathsetmacro{\a@three}{(\cachedata)}%
+    \pgfmathsetmacro{\myAns}{(max(max(\a@one, \a@two), \a@three))}%
+}%

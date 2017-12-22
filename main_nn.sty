@@ -1,0 +1,27 @@
+\newcommand{\trainingProcess}{%
+  \evalZ@iris{1}%
+  \evalA@iris{1}%
+  \evalZ@iris{2}%
+  \evalA@iris{2}%
+  \evalZ@iris{3}%
+  \softmax%
+  \costFunc{\x}%
+  \pgfmathsetmacro{\totalCost}{(\cost) + \totalCost}%
+  \xdef\totalCost{\totalCost}%
+  \evalUnitError%
+  \updateWeights
+  \updateBias
+  \stepcounter{learningStep}%
+}
+
+\newcommand{\testProcess}{%
+  \evalZ@iris{1}%
+  \evalA@iris{1}%
+  \evalZ@iris{2}%
+  \evalA@iris{2}%
+  \evalZ@iris{3}%
+  \softmax%
+  \identityFunc
+  \answer{\value{learningStep}}
+  \stepcounter{learningStep}%
+}

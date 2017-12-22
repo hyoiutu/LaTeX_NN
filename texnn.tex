@@ -1,0 +1,35 @@
+\documentclass[dvipdfmx,uplatex]{jsarticle}
+\usepackage{load_sty_nn}
+
+\parindent=0pt
+
+\begin{document}
+\addSupervisorToArray
+\initWeights
+\initBias
+\showInitWeights
+\foreach \epoch in {1,...,100}{%
+    \typeout{\epoch time}
+    \pgfmathsetmacro{\totalCost}{0}
+    \setcounter{learningStep}{1}
+    \readarray{OUnitError}{0&0&0}
+    \readarray{HUnitError}{0&0&0}
+    \foreach \x in {1,...,135}{%
+        \trainingProcess
+    }%
+    \pgfmathparse{int(mod(\epoch,50))}
+    \ifthenelse{\pgfmathresult=0}{%
+      \showAs
+      \showUpdateWeights
+    }%
+    total cost=\totalCost \\
+    \foreach \x in {136,...,150}{%
+        \pgfmathparse{int(mod(\epoch,1))}
+        \ifthenelse{\pgfmathresult=0}{%
+          \testProcess
+          \showAnswer
+        }%
+
+    }%
+}
+\end{document}

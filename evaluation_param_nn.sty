@@ -1,0 +1,114 @@
+% arg1: number of layer
+\newcommand{\evalZ@iris}[1]{%
+    % case of input Layer
+    \ifthenelse{#1=1}{%
+        \foreach \x in {1,...,\value{inputNum}}{%
+            \checkirisSVArray(\value{learningStep},\x)%
+            \assignArray{\Zs@iris(#1,\x)}{\cachedata}%
+        }%
+    }%
+    {%
+        % case of output layer
+        \ifthenelse{#1=\value{layerNum}}{%
+            \foreach \x in {1,...,\value{classNum}}{%
+                \Zs@iris(#1,\x)=0%
+                \pgfmathsetmacro{\sum@tmp}{0}%
+                \foreach \y in {1,...,\value{layerSize}}{%
+                    \checkweights@HtoO@iris(\x, \y)%
+                    \pgfmathsetmacro{\w@tmp}{\cachedata}%
+                    \checkAs@iris(2, \y)%
+                    \pgfmathsetmacro{\a@tmp}{\cachedata}%
+                    \pgfmathsetmacro{\sum@tmp}{(\w@tmp * \a@tmp) + \sum@tmp}%
+                    \xdef\sum@tmp{\sum@tmp}%
+                }%
+                \checkbias@HtoO@iris(\x)%
+                \pgfmathsetmacro{\b@tmp}{\cachedata}%
+                \pgfmathsetmacro{\sum@tmp}{(\sum@tmp) + \b@tmp}%
+                \xdef\sum@tmp{\sum@tmp}%
+                \assignArray{\Zs@iris(#1,\x)}{\sum@tmp}%
+            }%
+        }%
+        % case of hidden layer
+        {%
+            \foreach \x in {1,...,\value{layerSize}}{%
+                \Zs@iris(#1,\x)=0%
+                \pgfmathsetmacro{\sum@tmp}{0}%
+                \foreach \y in {1,...,\value{inputNum}}{%
+                    \checkweights@ItoH@iris(\x, \y)%
+                    \pgfmathsetmacro{\w@tmp}{\cachedata}%
+                    \checkAs@iris(1, \y)%
+                    \pgfmathsetmacro{\a@tmp}{\cachedata}%
+                    \pgfmathsetmacro{\sum@tmp}{(\w@tmp * \a@tmp) + \sum@tmp}%
+                    \xdef\sum@tmp{\sum@tmp}%
+                }%
+                \checkbias@ItoH@iris(\x)%
+                \pgfmathsetmacro{\b@tmp}{\cachedata}%
+                \pgfmathsetmacro{\sum@tmp}{(\sum@tmp) + \b@tmp}%
+                \assignArray{\Zs@iris(#1,\x)}{\sum@tmp}%
+                \xdef\sum@tmp{\sum@tmp}%
+            }%
+        }%
+    }%
+}%
+%
+% arg1: number of layer
+\newcommand{\evalA@iris}[1]{%
+    % case of input Layer
+    \ifthenelse{#1=1}{%
+        \foreach \x in {1,...,\value{inputNum}}{%
+            \checkZs@iris(#1, \x)%
+            \assignArray{\As@iris(#1,\x)}{\cachedata}%
+        }
+
+    }%
+    {%
+        % case of output layer
+        \ifthenelse{#1=\value{layerNum}}{%
+            \foreach \x in {1,...,\value{classNum}}{%
+                \checkZs@iris(#1, \x)%
+                \activationFunction@texnn{\cachedata}%
+                \assignArray{\As@iris(#1,\x)}{\y@texnn}%
+            }%
+        }%
+        % case of hidden layer
+        {%
+            \foreach \x in {1,...,\value{layerSize}}{%
+                \checkZs@iris(#1, \x)%
+                \activationFunction@texnn{\cachedata}%
+                \assignArray{\As@iris(#1,\x)}{\y@texnn}%
+            }%
+
+        }%
+    }%
+}%
+
+\newcommand{\evalUnitError}{%
+    % evaluation output unit error
+    \foreach \x in {1,...,\value{classNum}}{%
+        \checkAs@iris(3, \x)%
+        \pgfmathsetmacro{\a@tmp}{\cachedata}%
+        \checkoneHotTeacher(\x)%
+        \pgfmathsetmacro{\t@tmp}{\cachedata}%
+        \pgfmathsetmacro{\delta@tmp}{(\a@tmp - \t@tmp)}%
+        \assignArray{\OUnitError(\x)}{\delta@tmp}%
+    }%
+    % evaluation hidden unit error
+    \foreach \x in {1,...,\value{layerSize}}{%
+        \checkZs@iris(2, \x)%
+        \activationFunctionDiff@texnn{\cachedata}%
+        \checkOUnitError(1)%
+        \pgfmathsetmacro{\deltaOne}{\cachedata}%
+        \checkOUnitError(2)%
+        \pgfmathsetmacro{\deltaTwo}{\cachedata}%
+        \checkOUnitError(3)%
+        \pgfmathsetmacro{\deltaThree}{\cachedata}%
+        \checkweights@HtoO@iris(1,\x)%
+        \pgfmathsetmacro{\w@one}{\cachedata}%
+        \checkweights@HtoO@iris(2,\x)%
+        \pgfmathsetmacro{\w@two}{\cachedata}%
+        \checkweights@HtoO@iris(3,\x)%
+        \pgfmathsetmacro{\w@three}{\cachedata}%
+        \pgfmathsetmacro{\delta@tmp}{((\deltaOne*\w@one) + \deltaTwo*\w@two + \deltaThree*\w@three)*\y@texnn}%
+        \assignArray{\HUnitError(\x)}{\delta@tmp}%
+    }%
+}%

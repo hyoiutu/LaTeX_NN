@@ -1,0 +1,76 @@
+% arg1: x
+\newcommand{\activationFunction@texnn}[1]{%
+    \pgfmathsetmacro{\x@texnn}{#1}%
+    \pgfmathsetmacro{\y@texnn}{max(0, \x@texnn)}%
+}%
+
+
+% arg1: x
+\newcommand{\activationFunctionDiff@texnn}[1]{%
+    \pgfmathsetmacro{\x@texnn}{#1}
+    \pgfmathsetmacro{\y@texnn}{\x@texnn>0 ? 1 : 0}%
+}%
+
+% arg1: x
+\newcommand{\softmax}{%
+    \checkZs@iris(3,1)%
+    \pgfmathsetmacro{\z@one}{\cachedata}%
+    \checkZs@iris(3,2)%
+    \pgfmathsetmacro{\z@two}{\cachedata}%
+    \checkZs@iris(3,3)%
+    \pgfmathsetmacro{\z@three}{\cachedata}%
+    \pgfmathsetmacro{\max@tmp}{max(max(\z@one, \z@two), \z@three)}
+    \FPeval{\z@denom}{(exp(\z@one-\max@tmp)) + exp(\z@two-\max@tmp) + exp(\z@three-\max@tmp)}%
+    \FPeval{\y@texnn}{(exp(\z@one-\max@tmp) / \z@denom)}%
+    \assignArray{\As@iris(3, 1)}{\y@texnn}%
+    \FPeval{\y@texnn}{(exp(\z@two-\max@tmp) / \z@denom)}%
+    \assignArray{\As@iris(3, 2)}{\y@texnn}%
+    \FPeval{\y@texnn}{(exp(\z@three-\max@tmp) / \z@denom)}%
+    \assignArray{\As@iris(3, 3)}{\y@texnn}%
+
+}%
+
+\newcommand{\identityFunc}{%
+  \checkZs@iris(3, 1)%
+  \assignArray{\As@iris(3, 1)}{\cachedata}
+  \checkZs@iris(3, 2)%
+  \assignArray{\As@iris(3, 2)}{\cachedata}%
+  \checkZs@iris(3, 3)%
+  \assignArray{\As@iris(3, 3)}{\cachedata}%
+}
+
+\newcommand{\assignArray}[2]{%
+  \begingroup\edef\xx{\endgroup\noexpand#1={#2}}\xx%
+}%
+
+% arg is array name
+\def\getArrayValue#1#2{%
+\Huge VARIABLE NAME IS #1
+\csname check#1\endcsname%
+\begingroup\edef\xx{\endgroup\pgfmathsetmacro{\csname #2\endcsname}{\cachedata}}\xx%
+%\expandafter\pgfmathsetmacro\csname #2\endcsname{\cachedata}%
+%\Huge\csname #1\endcsname%
+\expandafter\xdef\csname #2\endcsname{\csname #2\endcsname}
+}%
+
+
+% get one hot embedding
+% setosa => 0
+% versicolor => 1
+% virginica => 2
+\newcommand{\onehotembedding}[1]{%
+    \readarray{oneHotTeacher}{0&0&0}%
+    %\def\teacher{\getArrayValue{irisCorrectArray(#1)}}%
+    \checkirisCorrectArray(#1)%
+    \ifthenelse{\equal{\cachedata}{setosa}}{%
+        \oneHotTeacher(1)=1%
+    }%
+    {%
+        \ifthenelse{\equal{\cachedata}{versicolor}}{%
+            \oneHotTeacher(2)=1%
+        }%
+        {%
+            \oneHotTeacher(3)=1%
+        }%
+    }%
+}%
